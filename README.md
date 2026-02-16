@@ -30,8 +30,8 @@ using **Puppeteer**.
 
 ### 1️⃣ Clone Repository
 
-    git clone https://github.com/your-username/pdf-generator-api.git
-    cd pdf-generator-api
+    git clone https://github.com/anmolpaweriya/url-to-pdf
+    cd url-to-pdf
 
 ### 2️⃣ Install Dependencies
 
@@ -43,7 +43,7 @@ using **Puppeteer**.
 
 Start the server:
 
-    node server.js
+    node index.js
 
 Server runs at:
 
@@ -134,7 +134,7 @@ For production environments, consider implementing:
 ## 📂 Project Structure
 
     .
-    ├── server.js
+    ├── index.js
     ├── package.json
     ├── Dockerfile
     ├── .dockerignore
