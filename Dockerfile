@@ -1,51 +1,42 @@
-# Use official Node image
-FROM node:20-slim
+# Use Debian Bullseye (stable + glibc)
+FROM node:18-bullseye
 
-# Install dependencies required by Puppeteer
+# Install Chromium and required dependencies
 RUN apt-get update && apt-get install -y \
-    ca-certificates \
+    chromium \
     fonts-liberation \
+    fonts-noto-color-emoji \
     libasound2 \
     libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
     libgtk-3-0 \
-    libnspr4 \
     libnss3 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxrandr2 \
-    libxrender1 \
-    libxshmfence1 \
     libxss1 \
-    libxtst6 \
-    wget \
     xdg-utils \
+    ca-certificates \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Prevent Puppeteer from downloading its own Chromium
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Create non-root user (security best practice)
+RUN useradd -m pptruser
+
 WORKDIR /app
 
-# Copy package files first (for better caching)
 COPY package*.json ./
 
-# Install dependencies
+# Install only production deps
 RUN npm install --production
 
-# Copy rest of the app
 COPY . .
 
-# Expose port
+# Change ownership to non-root user
+RUN chown -R pptruser:pptruser /app
+
+USER pptruser
+
 EXPOSE 3000
 
-# Start server
 CMD ["node", "index.js"]
